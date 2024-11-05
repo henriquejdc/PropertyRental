@@ -45,7 +45,6 @@ services:
         sh /scripts/wait_for_services.sh  &&
         sh /scripts/collect_static.sh &&
         sh /scripts/migrate.sh &&
-        sh /scripts/run_tests.sh &&
         sh /scripts/run_server.sh
       "
     user: root
@@ -70,6 +69,23 @@ services:
       - rabbitmq
       - redis
     user: root
+
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile-postgresql
+    command: >
+      sh -c "
+        sh /scripts/run_tests.sh
+      "
+    user: root
+    env_file:
+      - .env_postgresql
+    depends_on:
+      - django
+      - celery
+    volumes:
+      - ./django:/property_rental
 
 volumes:
   redis_data:
