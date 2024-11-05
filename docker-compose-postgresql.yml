@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  postgresql:
+    container_name: postgresql
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./volumes/postgresql_data:/var/lib/postgresql/data/
+    env_file:
+      - .env_postgresql
+
+  rabbitmq:
+    image: rabbitmq:management-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=mypass
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  redis:
+    image: redis:alpine
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6380:6379"
+
+  django:
+    build:
+      context: .
+      dockerfile: Dockerfile-postgresql
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./django:/property_rental
+    command: >
+      sh -c "
+        sh /scripts/wait_for_db.sh &&
+        sh /scripts/wait_for_services.sh  &&
+        sh /scripts/collect_static.sh &&
+        sh /scripts/migrate.sh &&
+        sh /scripts/run_tests.sh &&
+        sh /scripts/run_server.sh
+      "
+    user: root
+    env_file:
+      - .env_postgresql
+    depends_on:
+      - postgresql
+      - rabbitmq
+      - redis
+
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile-postgresql
+    command: sh -c "/scripts/wait_for_services.sh celery -A property_rental worker --loglevel=info"
+    env_file:
+      - .env_postgresql
+    volumes:
+      - ./django:/property_rental
+    depends_on:
+      - django
+      - rabbitmq
+      - redis
+    user: root
+
+volumes:
+  redis_data:

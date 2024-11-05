@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  django:
+    build:
+      context: .
+      dockerfile: Dockerfile-sqlite
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./django:/property_rental
+    command: >
+      sh -c "
+        sh /scripts/wait_for_db.sh &&
+        sh /scripts/wait_for_services.sh &&
+        sh /scripts/collect_static.sh &&
+        sh /scripts/migrate.sh &&
+        sh /scripts/run_tests.sh &&
+        sh /scripts/run_server.sh
+      "
+    user: root
+    env_file:
+      - .env_sqlite
+    depends_on:
+      - rabbitmq
+      - redis
+
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile-sqlite
+    command: sh -c "/scripts/wait_for_services.sh celery -A property_rental worker --loglevel=info"
+    env_file:
+      - .env_sqlite
+    volumes:
+      - ./django:/property_rental
+    depends_on:
+      - django
+      - rabbitmq
+      - redis
+    user: root
+
+  rabbitmq:
+    image: rabbitmq:management-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=mypass
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  redis:
+    image: redis:alpine
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6380:6379"
+
+volumes:
+  redis_data:

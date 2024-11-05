@@ -1,0 +1,36 @@
+FROM python:3.13-alpine
+
+# Define variáveis de ambiente
+ENV PATH="/scripts:${PATH}"
+
+# Instalar dependências do sistema para compilar o psycopg2, se você escolher usar psycopg2
+RUN apk add --no-cache netcat-openbsd
+RUN apk add --update --no-cache --virtual .tmp gcc libc-dev linux-headers musl-dev postgresql-dev
+RUN apk add libffi-dev
+
+# Copiar e instalar requisitos
+COPY ./django/requirements.txt /requirements.txt
+RUN pip install --no-cache-dir -r /requirements.txt
+
+# Cria o diretório da aplicação Django
+RUN mkdir /django
+COPY ./django /django
+WORKDIR /django
+
+# Copia os scripts e ajusta as permissões
+COPY ./scripts /scripts
+RUN chmod +x /scripts/*
+
+# Cria diretórios para arquivos de mídia e estáticos
+RUN mkdir -p /vol/web/media /vol/web/static
+
+# Adiciona um usuário e ajusta permissões
+RUN adduser -D user && \
+    chown -R user:user /vol && \
+    chmod -R 755 /vol/web
+
+# Define o usuário para rodar a aplicação
+USER user
+
+# Comando padrão para iniciar o contêiner
+CMD ["sh", "scripts/entrypoint.sh"]
