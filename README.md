@@ -1,103 +1,92 @@
 ### Property Rental System RestAPI
 **Abordagem:** 
 
-Utilizado o Django Rest Framework para a criação de um sistema de logística de pedidos.
+Utilizado o Django Rest Framework para a criação de um sistema de aluguel.
 
-Criado os objetos em banco relacional **(PostgreSQL/SQLite)**:
+### Exemplos de Requisições 
 
-**Account** 
-- id
-- balance
+- **POST /properties - Criar uma propriedade** 
+```
+{ 
+    "title": "Casa de Férias Algarve", 
+    "address_street": "Av Github", 
+    "address_number": "2024", 
+    "address_neighborhood": "Jurerê", 
+    "address_city": "Florianópolis", 
+    "address_state": "SC", 
+    "country": "BRA", 
+    "rooms": 3, 
+    "capacity": 3, 
+    "price_per_night": 120.00, 
+    "owner_id": 1, 
+    "host_id": 1, 
+    "seazone_commission” 0.20, 
+    "host_commission” 0.10, 
+    "owner_commission” 0.70, 
+} 
+```
 
-**Transaction** 
-- account_id
-- type
-- value
-- tax
+- **POST /reservations - Criar uma reserva** 
+```
+{ 
+    "property_id": 1, 
+    "client_name": "John Doe", 
+    "client_email": "johndoe@example.com", 
+    "start_date": "2024-12-20", 
+    "end_date": "2024-12-25", 
+    "guests_quantity": 2 
+} 
+```
 
-Taxas:
+- **GET /reservations - Buscar uma reservas** 
+```
+[ 
+    { 
+    "reservation_id": 1, 
+    "property": {Property object}, 
+    "owner": {Owner object}, 
+    "host": {Host object}, 
+    "property": {property object}, 
+    "client_name": "John Doe", 
+    "client_email": "johndoe@example.com", 
+    "start_date": "2024-12-20", 
+    "end_date": "2024-12-25", 
+    "guests_quantity": 2, 
+    "total_price": 1000.0, 
+    "seazone_commission": 200.0, 
+    "host_commission": 100.0, 
+    "owner_commission": 700.0, 
+    }, 
+] 
+```
 
-**Taxa de débito:** 3% sobre a operação
+- **GET /properties/availability?property_id=1&start_date=2024-12-20&end_date=2024-12-27&guests_quantity=4  - Buscar disponibilidade** 
+```
+Status: 200 Disponivel
+Status: 400 Não disponivel
+Status: 404 Não encontrada propriedade
+```
 
-**Taxa de crédito:** 5% sobre a operação
+- **GET /financial/commissions?type=seazone&month=10&year=2024 - Buscar comissões** 
+```
+{ 
+    "total_commission": 5000.0, 
+    "total_reservations": 5, 
+    "properties_statement": [ 
+        { 
+            "property_id": 1, 
+            "total_commission": 2000.0, 
+            "total_reservations": 2, 
+        }, 
+        { 
+            "property_id": 2, 
+            "total_commission": 3000.0, 
+            "total_reservations": 3, 
+        }, 
+    ], 
+}
 
-**Taxa do Pix:** Sem custo
-
-Criado o app manager e o viewsets com os endpoints:
-
-O endpoint "/conta" deve criar e fornecer informações sobre o número da conta e o saldo. 
-
-- **POST /v1/conta/** que recebe um valor inicial e retorna o número da conta
-    **Exemplo:**
-    ```
-    {
-        "conta_id": 123
-        "valor": 10
-    }
-    ```
-    Retorna:
-    ```
-    {
-        "conta_id": 123
-        "saldo": 10
-    }
-    ```  
-
-- **GET /v1/conta/?id=123 ou /v1/conta/?conta_id=123** retorna o saldo da conta
-    **Exemplo:**
-    ```
-    {
-        "conta_id": 123
-        "saldo”: 10
-    }
-    ```
-    **Filtros:**
-
-      id: Identificador da conta (Int)
-
-      conta_id: Identificador do conta (Int)
-
-
-O endpoint "/transacao" será responsável por realizar diversas operações financeiras.
-
-- **POST /v1/transacao/** cria uma transação conforme o tipo de pagamento, gera taxa e retorna o saldo da conta
-    **Exemplo:**
-    ```
-    {
-        "forma_pagamento": "P", 
-        "conta_id": 123, 
-        "valor":10
-    }
-    ```
-    Retorna:
-    ```
-    {
-        "conta_id": 123
-        "saldo”: 0
-    }
-    ```  
-
-
-**Por que desta abordagem?**
-
-**Por que usei o Django Rest?** Utilizei está abordaggem pelo meu conhecimento em Django Rest
-
-e por já ter um projeto base para a criação de sistemas com autenticação, base de viewset e testes.
-
-**Por que usei o banco relacional?** Por ser um banco de dados que facilita a busca de dados e reduz a duplicidade, 
-
-além de que é facilmente integrado ao Django e possui suporte para consultar com filtros e ordenação.
-
-**Por que usei o Docker?** Utilizei o Docker para facilitar a execução do projeto em qualquer ambiente,
-
-
-**Adicionais**
-
-Utilizado RabbitMQ para a criação de filas de mensagens para a realização de transações assíncronas.
-
-Utilizado Celery para a criação de tarefas assíncronas para a realização de transações.
-
-Utilizado Redis para a criação de cache de mensagens para a realização de transações assíncronas.
+```
 
 
 ### Run in:
@@ -111,12 +100,6 @@ http://localhost:8000/docs/
 You need to create .env like example_env file
 
 sudo docker-compose -f docker-compose-postgresql.yml up
-```
-
-
-### Docker SQLite3:
-```
-sudo docker-compose -f docker-compose-sqlite.yml up
 ```
 
 
@@ -161,7 +144,15 @@ CREATE EXTENSION pg_trgm;
 
 ### Requirements: 
 ```
+# Install requirements
 pip install -r requirements.txt
+
+# Freeze requirements
+pip freeze > requirements.in
+
+# Compile
+ requirements
+pip-compile requirements.in
 ```
 
 

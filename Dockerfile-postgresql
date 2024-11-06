@@ -10,7 +10,7 @@ RUN apk add libffi-dev
 
 # Copiar e instalar requisitos
 COPY ./django/requirements.txt /requirements.txt
-RUN pip install --no-cache-dir -r /requirements.txt
+RUN pip install -r /requirements.txt
 
 # Cria o diretório da aplicação Django
 RUN mkdir /django
@@ -20,6 +20,8 @@ WORKDIR /django
 # Copia os scripts e ajusta as permissões
 COPY ./scripts /scripts
 RUN chmod +x /scripts/*
+
+COPY ./.env_postgresql /.env
 
 # Cria diretórios para arquivos de mídia e estáticos
 RUN mkdir -p /vol/web/media /vol/web/static

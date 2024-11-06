@@ -4,24 +4,18 @@
 #
 #    pip-compile django/requirements.in
 #
-amqp==5.2.0
-    # via
-    #   -r django/requirements.in
-    #   kombu
 asgiref==3.8.1
     # via
     #   -r django/requirements.in
     #   django
+baker==1.3
+    # via -r django/requirements.in
 billiard==4.2.1
-    # via
-    #   -r django/requirements.in
-    #   celery
+    # via -r django/requirements.in
 build==1.2.2.post1
     # via
     #   -r django/requirements.in
     #   pip-tools
-celery==5.4.0
-    # via -r django/requirements.in
 certifi==2024.8.30
     # via
     #   -r django/requirements.in
@@ -37,23 +31,16 @@ charset-normalizer==3.4.0
 click==8.1.7
     # via
     #   -r django/requirements.in
-    #   celery
     #   click-didyoumean
     #   click-plugins
     #   click-repl
     #   pip-tools
 click-didyoumean==0.3.1
-    # via
-    #   -r django/requirements.in
-    #   celery
+    # via -r django/requirements.in
 click-plugins==1.1.1
-    # via
-    #   -r django/requirements.in
-    #   celery
+    # via -r django/requirements.in
 click-repl==0.3.0
-    # via
-    #   -r django/requirements.in
-    #   celery
+    # via -r django/requirements.in
 coverage==7.6.4
     # via -r django/requirements.in
 cryptography==43.0.3
@@ -69,7 +56,6 @@ django==5.1.3
     # via
     #   -r django/requirements.in
     #   django-filter
-    #   django-redis
     #   djangorestframework
     #   djangorestframework-simplejwt
     #   djoser
@@ -77,8 +63,6 @@ django==5.1.3
     #   model-bakery
     #   social-auth-app-django
 django-filter==24.3
-    # via -r django/requirements.in
-django-redis==5.4.0
     # via -r django/requirements.in
 django-templated-mail==1.1.1
     # via
@@ -102,11 +86,9 @@ idna==3.10
     #   -r django/requirements.in
     #   requests
 inflection==0.5.1
-    # via drf-yasg
-kombu==5.4.2
     # via
     #   -r django/requirements.in
-    #   celery
+    #   drf-yasg
 model-bakery==1.20.0
     # via -r django/requirements.in
 oauthlib==3.2.2
@@ -127,10 +109,10 @@ prompt-toolkit==3.0.48
     # via
     #   -r django/requirements.in
     #   click-repl
-psycopg2==2.9.10
-    # via -r django/requirements.in
 psycopg2-binary==2.9.10
-    # via psycopg2-pool
+    # via
+    #   -r django/requirements.in
+    #   psycopg2-pool
 psycopg2-pool==1.2
     # via -r django/requirements.in
 pycparser==2.22
@@ -144,12 +126,11 @@ pyjwt==2.9.0
     #   social-auth-core
 pyproject-hooks==1.2.0
     # via
+    #   -r django/requirements.in
     #   build
     #   pip-tools
 python-dateutil==2.9.0.post0
-    # via
-    #   -r django/requirements.in
-    #   celery
+    # via -r django/requirements.in
 python-decouple==3.8
     # via -r django/requirements.in
 python3-openid==3.2.0
@@ -164,10 +145,6 @@ pyyaml==6.0.2
     # via
     #   -r django/requirements.in
     #   drf-yasg
-redis==5.2.0
-    # via
-    #   -r django/requirements.in
-    #   django-redis
 requests==2.32.3
     # via
     #   -r django/requirements.in
@@ -178,7 +155,9 @@ requests-oauthlib==2.0.0
     #   -r django/requirements.in
     #   social-auth-core
 six==1.16.0
-    # via python-dateutil
+    # via
+    #   -r django/requirements.in
+    #   python-dateutil
 social-auth-app-django==5.4.2
     # via
     #   -r django/requirements.in
@@ -192,10 +171,7 @@ sqlparse==0.5.1
     #   -r django/requirements.in
     #   django
 tzdata==2024.2
-    # via
-    #   -r django/requirements.in
-    #   celery
-    #   kombu
+    # via -r django/requirements.in
 uritemplate==4.1.1
     # via
     #   -r django/requirements.in
@@ -205,17 +181,15 @@ urllib3==2.2.3
     #   -r django/requirements.in
     #   requests
 vine==5.1.0
-    # via
-    #   -r django/requirements.in
-    #   amqp
-    #   celery
-    #   kombu
+    # via -r django/requirements.in
 wcwidth==0.2.13
     # via
     #   -r django/requirements.in
     #   prompt-toolkit
 wheel==0.44.0
-    # via pip-tools
+    # via
+    #   -r django/requirements.in
+    #   pip-tools
 whitenoise==6.8.2
     # via -r django/requirements.in
 

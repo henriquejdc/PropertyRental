@@ -1,10 +1,16 @@
 from rest_framework.routers import SimpleRouter
 
-from manager.views.transaction import TransactionViewSet
-from manager.views.account import AccountViewSet
+from manager.views.financial import CommissionViewSet
+from manager.views.property import PropertyViewSet
+from manager.views.host import HostViewSet
+from manager.views.owner import OwnerViewSet
+from manager.views.reservation import ReservationViewSet
 
 
 router = SimpleRouter()
-router.register(r'transacao', TransactionViewSet, basename='transaction')
-router.register(r'conta', AccountViewSet, basename='account')
+router.register(r'properties', PropertyViewSet, basename='property')
+router.register(r'hosts', HostViewSet, basename='host')
+router.register(r'owners', OwnerViewSet, basename='owner')
+router.register(r'reservations', ReservationViewSet, basename='reservation')
+router.register(r'financial/commissions', CommissionViewSet, basename='financial')
 urlpatterns = router.urls

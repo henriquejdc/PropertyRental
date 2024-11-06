@@ -15,22 +15,6 @@ services:
     env_file:
       - .env_postgresql
 
-  rabbitmq:
-    image: rabbitmq:management-alpine
-    environment:
-      - RABBITMQ_DEFAULT_USER=admin
-      - RABBITMQ_DEFAULT_PASS=mypass
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-
-  redis:
-    image: redis:alpine
-    volumes:
-      - redis_data:/data
-    ports:
-      - "6380:6379"
-
   django:
     build:
       context: .
@@ -42,7 +26,6 @@ services:
     command: >
       sh -c "
         sh /scripts/wait_for_db.sh &&
-        sh /scripts/wait_for_services.sh  &&
         sh /scripts/collect_static.sh &&
         sh /scripts/migrate.sh &&
         sh /scripts/run_server.sh
@@ -52,40 +35,19 @@ services:
       - .env_postgresql
     depends_on:
       - postgresql
-      - rabbitmq
-      - redis
 
-  celery:
-    build:
-      context: .
-      dockerfile: Dockerfile-postgresql
-    command: sh -c "/scripts/wait_for_services.sh celery -A property_rental worker --loglevel=info"
-    env_file:
-      - .env_postgresql
-    volumes:
-      - ./django:/property_rental
-    depends_on:
-      - django
-      - rabbitmq
-      - redis
-    user: root
-
-  tests:
-    build:
-      context: .
-      dockerfile: Dockerfile-postgresql
-    command: >
-      sh -c "
-        sh /scripts/run_tests.sh
-      "
-    user: root
-    env_file:
-      - .env_postgresql
-    depends_on:
-      - django
-      - celery
-    volumes:
-      - ./django:/property_rental
-
-volumes:
-  redis_data:
+#  tests:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile-postgresql
+#    command: >
+#      sh -c "
+#        sh /scripts/run_tests.sh
+#      "
+#    user: root
+#    env_file:
+#      - .env_postgresql
+#    depends_on:
+#      - django
+#    volumes:
+#      - ./django:/property_rental
