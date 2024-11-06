@@ -3,6 +3,8 @@
 
 Utilizado o Django Rest Framework para a criação de um sistema de aluguel.
 
+Utilizei uma estrutura base minha para realizar o desenvolvimento do projeto.
+
 ### Exemplos de Requisições 
 
 - **POST /properties - Criar uma propriedade** 
@@ -40,24 +42,26 @@ Utilizado o Django Rest Framework para a criação de um sistema de aluguel.
 
 - **GET /reservations - Buscar uma reservas** 
 ```
-[ 
+...
+results: [ 
     { 
-    "reservation_id": 1, 
-    "property": {Property object}, 
-    "owner": {Owner object}, 
-    "host": {Host object}, 
-    "property": {property object}, 
-    "client_name": "John Doe", 
-    "client_email": "johndoe@example.com", 
-    "start_date": "2024-12-20", 
-    "end_date": "2024-12-25", 
-    "guests_quantity": 2, 
-    "total_price": 1000.0, 
-    "seazone_commission": 200.0, 
-    "host_commission": 100.0, 
-    "owner_commission": 700.0, 
+        "reservation_id": 1, 
+        "property": {Property object}, 
+        "owner": {Owner object}, 
+        "host": {Host object}, 
+        "property": {property object}, 
+        "client_name": "John Doe", 
+        "client_email": "johndoe@example.com", 
+        "start_date": "2024-12-20", 
+        "end_date": "2024-12-25", 
+        "guests_quantity": 2, 
+        "total_price": 1000.0, 
+        "seazone_commission": 200.0, 
+        "host_commission": 100.0, 
+        "owner_commission": 700.0, 
     }, 
 ] 
+...
 ```
 
 - **GET /properties/availability?property_id=1&start_date=2024-12-20&end_date=2024-12-27&guests_quantity=4  - Buscar disponibilidade** 
@@ -100,6 +104,8 @@ http://localhost:8000/docs/
 You need to create .env like example_env file
 
 sudo docker-compose -f docker-compose-postgresql.yml up
+
+sudo docker-compose -f docker-compose-postgresql.yml down
 ```
 
 
@@ -118,7 +124,7 @@ Use variables with the same names as you use when creating the database
 
 
 ### Environment: 
-Python Version 3.13.0
+Python Version 3.13.0 e Django 5.1.3
 ```
 python3 -m venv venv 
 OR
@@ -136,8 +142,8 @@ sudo -i -u postgres
 psql
 CREATE USER user_default WITH PASSWORD 'password_default';
 ALTER USER user_default CREATEDB;
-CREATE DATABASE vl_database;
-ALTER DATABASE vl_database OWNER TO user_default;
+CREATE DATABASE database_default;
+ALTER DATABASE database_default OWNER TO user_default;
 CREATE EXTENSION pg_trgm;
 ```
 
@@ -150,8 +156,7 @@ pip install -r requirements.txt
 # Freeze requirements
 pip freeze > requirements.in
 
-# Compile
- requirements
+# Compile requirements
 pip-compile requirements.in
 ```
 

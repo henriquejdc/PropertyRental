@@ -1,6 +1,24 @@
 version: '3.8'
 
 services:
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile-postgresql
+    command: >
+      sh -c "
+        rm -f /tmp/test_finished.lock &&
+        sh /scripts/run_tests.sh &&
+        touch /tmp/test_finished.lock
+      "
+    user: root
+    env_file:
+      - .env_postgresql
+    volumes:
+      - ./django:/property_rental
+      - test-lock:/tmp
+    restart: "no"
+
   postgresql:
     container_name: postgresql
     image: postgres:15-alpine
@@ -12,8 +30,13 @@ services:
       - "5433:5432"
     volumes:
       - ./volumes/postgresql_data:/var/lib/postgresql/data/
+      - test-lock:/tmp
     env_file:
       - .env_postgresql
+    depends_on:
+      - tests
+    restart: "no"
+    entrypoint: ["sh", "-c", "while [ ! -f /tmp/test_finished.lock ]; do echo 'Aguardando testes...'; sleep 50; done; echo 'Testes concluídos, iniciando PostgreSQL' && exec docker-entrypoint.sh postgres"]
 
   django:
     build:
@@ -23,6 +46,7 @@ services:
       - "8000:8000"
     volumes:
       - ./django:/property_rental
+      - test-lock:/tmp
     command: >
       sh -c "
         sh /scripts/wait_for_db.sh &&
@@ -34,20 +58,9 @@ services:
     env_file:
       - .env_postgresql
     depends_on:
+      - tests
       - postgresql
+    restart: "no"
 
-  tests:
-    build:
-      context: .
-      dockerfile: Dockerfile-postgresql
-    command: >
-      sh -c "
-        sh /scripts/run_tests.sh
-      "
-    user: root
-    env_file:
-      - .env_postgresql
-    depends_on:
-      - django
-    volumes:
-      - ./django:/property_rental
+volumes:
+  test-lock:
