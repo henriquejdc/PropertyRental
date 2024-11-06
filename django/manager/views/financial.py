@@ -1,5 +1,6 @@
 # Django imports
 from django.db.models import Sum, Count
+from django.utils.translation import gettext_lazy as _
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
@@ -10,7 +11,7 @@ from rest_framework import status
 from rest_framework.exceptions import ValidationError
 
 # Project imports
-from manager.models import Reservation, Property, SeazoneCommission, HostCommission, OwnerCommission
+from manager.models import Property, SeazoneCommission, HostCommission, OwnerCommission
 
 
 class CommissionViewSet(viewsets.ViewSet):
@@ -18,7 +19,7 @@ class CommissionViewSet(viewsets.ViewSet):
 
 
     @swagger_auto_schema(
-        operation_summary="Availability properties",
+        operation_summary="Financial commission",
         manual_parameters=[
             openapi.Parameter(
                 'type', openapi.IN_QUERY, description="Type 'seazone', 'owner', 'host", type=openapi.TYPE_STRING,
@@ -40,11 +41,11 @@ class CommissionViewSet(viewsets.ViewSet):
         year = request.query_params.get('year', None)
 
         if not commission_type or commission_type not in ['seazone', 'owner', 'host']:
-            raise ValidationError("Use type 'seazone', 'owner' or 'host'.")
+            raise ValidationError(_("Use type 'seazone', 'owner' or 'host'."))
 
         if (year and not month) or (month and not year):
             raise ValidationError(
-                "Required year and month."
+                _("Required year and month.")
             )
 
         filter = {}

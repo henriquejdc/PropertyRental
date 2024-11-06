@@ -1,4 +1,5 @@
 # Django imports
+from django.utils.translation import gettext_lazy as _
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
@@ -60,12 +61,12 @@ class PropertyViewSet(BaseCollectionViewSet):
         try:
             property_obj = Property.objects.get(id=property_id)
         except Property.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND, data={'message': 'Property not found'})
+            return Response(status=status.HTTP_404_NOT_FOUND, data={'message': _('Property not found')})
 
         if property_obj.capacity < int(guests_quantity):
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data={'message': 'Property does not have capacity'}
+                data={'message': _('Property does not have capacity')}
             )
 
         overlapping_reservations = Reservation.objects.filter(
@@ -76,7 +77,10 @@ class PropertyViewSet(BaseCollectionViewSet):
         if overlapping_reservations:
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data={'message': 'Not avalailable for the selected dates.'}
+                data={'message': _('Not avalailable for the selected dates.')}
             )
 
-        return Response(status=status.HTTP_200_OK, data={'message': 'Avalailable for the selected dates.'})
+        return Response(
+            status=status.HTTP_200_OK,
+            data={'message': _('Avalailable for the selected dates.')}
+        )

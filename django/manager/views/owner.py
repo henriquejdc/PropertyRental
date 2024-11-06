@@ -1,6 +1,3 @@
-# Django imports
-import django_filters.rest_framework
-
 # Third party imports
 from rest_framework.permissions import IsAuthenticated
 

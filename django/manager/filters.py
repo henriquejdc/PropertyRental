@@ -11,7 +11,7 @@ class PropertyFilter(django_filters.FilterSet):
     address_city = django_filters.CharFilter(field_name='address_city', lookup_expr='icontains')
     address_state = django_filters.CharFilter(field_name='address_state', lookup_expr='icontains')
     capacity = django_filters.NumberFilter(field_name='capacity', lookup_expr='gte')
-    price_per_night = django_filters.NumberFilter(field_name='price_per_night', lookup_expr='gte')
+    price_per_night = django_filters.NumberFilter(field_name='price_per_night', lookup_expr='lte')
 
     class Meta:
         model = Property

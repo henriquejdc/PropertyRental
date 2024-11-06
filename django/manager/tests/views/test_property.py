@@ -47,13 +47,15 @@ class PropertyViewSetTestCase(BaseAPITestCase):
             seazone_commission=0.1,
             owner_commission=0.7,
             host_commission=0.7,
-            capacity=2
+            capacity=20
         )
         self.row_object_two = baker.make(
             'manager.Property',
             title='Item2',
             host=self.host,
             owner=self.owner,
+            price_per_night=Decimal(100.11),
+            capacity=10
         )
         self.validation_error_column = 'title'
         self.post_data = {
@@ -61,10 +63,11 @@ class PropertyViewSetTestCase(BaseAPITestCase):
             "address_street": "Line 1",
             "address_number": "99e",
             "address_neighborhood": "Hood 1",
+            "address_state": "State 1",
             "address_city": "My City",
             "country": "BRA",
             "rooms": 2,
-            "capacity": 2,
+            "capacity": 5,
             "price_per_night": "20.00",
             "seazone_commission": 0.1,
             "host_commission": 0.2,
@@ -80,6 +83,7 @@ class PropertyViewSetTestCase(BaseAPITestCase):
             "title": self.row_object.title,
             "address_street": self.row_object.address_street,
             "address_number": self.row_object.address_number,
+            "address_state": self.row_object.address_state,
             "address_neighborhood": self.row_object.address_neighborhood,
             "address_city": self.row_object.address_city,
             "country": self.row_object.country,
@@ -122,7 +126,42 @@ class PropertyViewSetTestCase(BaseAPITestCase):
                 'rows': 1,
                 'field_first_row_key': 'id',
                 'field_first_row_value': self.row_object_two.pk
-            }
+            },
+            # Assert address_neighborhood.
+            {
+                'url': f'{self.url}?address_neighborhood={self.row_object.address_neighborhood}',
+                'rows': 1,
+                'field_first_row_key': 'id',
+                'field_first_row_value': self.row_object.pk
+            },
+            # Assert address_city.
+            {
+                'url': f'{self.url}?address_city={self.row_object.address_city}',
+                'rows': 1,
+                'field_first_row_key': 'id',
+                'field_first_row_value': self.row_object.pk
+            },
+            # Assert address_state.
+            {
+                'url': f'{self.url}?address_state={self.row_object.address_state}',
+                'rows': 1,
+                'field_first_row_key': 'id',
+                'field_first_row_value': self.row_object.pk
+            },
+            # Assert capacity.
+            {
+                'url': f'{self.url}?capacity={self.row_object.capacity}',
+                'rows': 1,
+                'field_first_row_key': 'id',
+                'field_first_row_value': self.row_object.pk
+            },
+            # Assert price_per_night.
+            {
+                'url': f'{self.url}?price_per_night=22',
+                'rows': 1,
+                'field_first_row_key': 'id',
+                'field_first_row_value': self.row_object.pk
+            },
         ]
         
     def test_not_found_property_availability(self):
@@ -148,7 +187,7 @@ class PropertyViewSetTestCase(BaseAPITestCase):
             'property_id': self.row_object.pk,
             'start_date': '2024-01-01',
             'end_date': '2024-02-01',
-            'guests_quantity': 3,
+            'guests_quantity': 300,
         }
         response = self.get(
             f'{url}availability/'

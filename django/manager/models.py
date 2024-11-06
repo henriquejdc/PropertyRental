@@ -36,6 +36,7 @@ class Property(BaseModelDate):
     address_number = models.CharField(max_length=200)
     address_neighborhood = models.CharField(max_length=200)
     address_city = models.CharField(max_length=200)
+    address_state = models.CharField(max_length=200)
     country = models.CharField(max_length=3)
     rooms = models.PositiveIntegerField()
     capacity = models.PositiveIntegerField()

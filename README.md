@@ -222,6 +222,11 @@ HTML report: django/htmlcov/index.html
 ```
 
 
+### Coverage: 
+![img.png](img.png)
+
+
+
 ### New translations:
 ```
 python manage.py makemessages --locale pt_BR

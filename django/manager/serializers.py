@@ -1,5 +1,6 @@
 # Django imports
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 # Third-party imports
 from rest_framework import serializers
@@ -63,7 +64,7 @@ class PropertyCreateSerializer(serializers.ModelSerializer):
         total_commission = seazone_commission + host_commission + owner_commission
         if total_commission != 1:
             raise serializers.ValidationError(
-                "The sum of seazone_commission, host_commission, and owner_commission must equal 1."
+                _("The sum of seazone_commission, host_commission, and owner_commission must equal 1.")
             )
 
         return data
@@ -84,24 +85,26 @@ class ReservationCreateSerializer(serializers.ModelSerializer):
 
     def validate_start_date(self, value):
         if value < timezone.now().date():
-            raise serializers.ValidationError("The start date must be in the future.")
+            raise serializers.ValidationError(_("The start date must be in the future."))
         return value
 
     def validate_end_date(self, value):
         if value < timezone.now().date():
-            raise serializers.ValidationError("The end date must be in the future.")
+            raise serializers.ValidationError(_("The end date must be in the future."))
         return value
 
     def validate(self, data):
         start_date = data.get('start_date')
         end_date = data.get('end_date')
         if end_date <= start_date:
-            raise serializers.ValidationError("The end date must be after the start date.")
+            raise serializers.ValidationError(_("The end date must be after the start date."))
 
         property = data.get('property')
         guests_quantity = data.get('guests_quantity')
         if guests_quantity > property.capacity:
-            raise serializers.ValidationError("The number of guests exceeds the maximum capacity of the property.")
+            raise serializers.ValidationError(
+                _("The number of guests exceeds the maximum capacity of the property.")
+            )
 
         overlapping_reservations = Reservation.objects.filter(
             property=property,

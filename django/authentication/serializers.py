@@ -2,6 +2,9 @@
 from rest_framework import serializers, status
 from rest_framework.validators import ValidationError
 
+# Django imports
+from django.utils.translation import gettext_lazy as _
+
 # Project imports
 from .models import User
 
@@ -24,10 +27,10 @@ class UserCreationSerializer(serializers.ModelSerializer):
         username = User.objects.filter(username=attrs.get('username')).exists()
 
         if email:
-            raise ValidationError(detail="User with email exists", code=status.HTTP_403_FORBIDDEN)
+            raise ValidationError(detail=_("User with email exists"), code=status.HTTP_403_FORBIDDEN)
 
         if username:
-            raise ValidationError(detail="User with username exists", code=status.HTTP_403_FORBIDDEN)
+            raise ValidationError(detail=_("User with username exists"), code=status.HTTP_403_FORBIDDEN)
 
         return super().validate(attrs)
 
