@@ -37,7 +37,6 @@ class BaseAPITestCase(APITestCase):
     test_protected_error = True
     ignored_keys_from_response = [
         'id',
-        'code',
         'created_by',
         'updated_by',
         'created_at',

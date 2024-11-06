@@ -20,8 +20,8 @@ class UserCreationSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'password']
 
     def validate(self, attrs):
-        email = User.objects.filter(username=attrs.get('username')).exists()
-        username = User.objects.filter(username=attrs.get('username')).exists()    
+        email = User.objects.filter(email=attrs.get('email')).exists()
+        username = User.objects.filter(username=attrs.get('username')).exists()
 
         if email:
             raise ValidationError(detail="User with email exists", code=status.HTTP_403_FORBIDDEN)
@@ -38,9 +38,8 @@ class UserCreationSerializer(serializers.ModelSerializer):
                 username=validated_data['username'],
                 email=validated_data['email'],
             )
-
             user.set_password(validated_data['password'])
             user.save()
             return user
-        except Exception as e:
+        except Exception as e:  # pragma: no cover
             raise ValidationError(detail=e, code=status.HTTP_500_INTERNAL_SERVER_ERROR)

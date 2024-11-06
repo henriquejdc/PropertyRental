@@ -5,7 +5,15 @@ from django.utils import timezone
 from rest_framework import serializers
 
 # Project imports
-from manager.models import Property, Owner, Host, Reservation, SeazoneCommission, HostCommission, OwnerCommission
+from manager.models import (
+    Property,
+    Owner,
+    Host,
+    Reservation,
+    SeazoneCommission,
+    HostCommission,
+    OwnerCommission
+)
 
 
 class OwnerSerializer(serializers.ModelSerializer):

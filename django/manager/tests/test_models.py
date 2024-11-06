@@ -1,9 +1,11 @@
-"""
-This module contains the unit tests for the services in shared app.
-"""
+# Third party imports
 from model_bakery import baker
 
+# Django imports
 from django.test import TestCase
+
+# Project imports
+from manager.models import SeazoneCommission, HostCommission, OwnerCommission
 
 
 class ModelsStrTestCase(TestCase):
@@ -16,8 +18,36 @@ class ModelsStrTestCase(TestCase):
     def test_get_str_model(self):
         """ Test all models __str__ methods. """
 
-        model_object = baker.make('manager.Account')
-        self.assertEqual(str(model_object), model_object.__str__())
+        owner = baker.make('manager.Owner')
+        self.assertEqual(str(owner), owner.__str__())
 
-        model_object = baker.make('manager.Transaction')
-        self.assertEqual(str(model_object), model_object.__str__())
+        host = baker.make('manager.Host')
+        self.assertEqual(str(host), host.__str__())
+
+        property_obj = baker.make(
+            'manager.Property',
+            owner=owner,
+            host=host,
+        )
+        self.assertEqual(str(property_obj), property_obj.__str__())
+
+        reservation = baker.make(
+            'manager.Reservation',
+            property=property_obj
+        )
+        self.assertEqual(str(reservation), reservation.__str__())
+
+        seazone_commission = SeazoneCommission.objects.get(
+            reservation=reservation
+        )
+        self.assertEqual(str(seazone_commission), seazone_commission.__str__())
+
+        host_commission = HostCommission.objects.get(
+            reservation=reservation
+        )
+        self.assertEqual(str(host_commission), host_commission.__str__())
+
+        owner_commission = OwnerCommission.objects.get(
+            reservation=reservation
+        )
+        self.assertEqual(str(owner_commission), owner_commission.__str__())

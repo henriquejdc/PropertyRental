@@ -1,6 +1,3 @@
-# Django imports
-import django_filters.rest_framework
-
 # Third party imports
 from rest_framework.permissions import IsAuthenticated
 
@@ -17,13 +14,10 @@ class ReservationViewSet(BaseCollectionViewSet):
     queryset = model_class.objects.all()
     serializer_class = ReservationSerializer
     http_method_names = ('get', 'post')
-    search_fields = ('title',)
+    search_fields = ('client_name', 'client_email')
     serializers = {
         'default': serializer_class,
         'create': ReservationCreateSerializer,
     }
     permission_classes = [IsAuthenticated]
     filterset_class = ReservationFilter
-    filter_backends = (
-        django_filters.rest_framework.DjangoFilterBackend,
-    )

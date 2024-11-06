@@ -14,7 +14,7 @@ from manager.models import (
 from property_rental.admin import property_rental_admin as admin_site
 
 
-class BaseAdmin(admin.ModelAdmin):
+class BaseAdmin(admin.ModelAdmin):  # pragma: no cover
     def get_list_display(self, request):
         fields = [field.name for field in self.model._meta.fields]
         return fields

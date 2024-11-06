@@ -5,7 +5,6 @@ from drf_yasg import openapi
 
 # Third party imports
 from rest_framework import viewsets
-from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
@@ -48,16 +47,19 @@ class CommissionViewSet(viewsets.ViewSet):
                 "Required year and month."
             )
 
-        reservations = Reservation.objects.all()
+        filter = {}
         if month and year:
-            reservations = reservations.filter(date__year=year, date__month=month)
+            filter = {
+                'reservation_date__year': year,
+                'reservation_date__month': month
+            }
 
         if commission_type == 'seazone':
-            commissions = SeazoneCommission.objects.filter(reservation__in=reservations)
+            commissions = SeazoneCommission.objects.filter(**filter)
         elif commission_type == 'host':
-            commissions = HostCommission.objects.filter(reservation__in=reservations)
+            commissions = HostCommission.objects.filter(**filter)
         elif commission_type == 'owner':
-            commissions = OwnerCommission.objects.filter(reservation__in=reservations)
+            commissions = OwnerCommission.objects.filter(**filter)
 
         total_commission = commissions.aggregate(total_commission=Sum('commission_value'))['total_commission'] or 0
         total_reservations = commissions.aggregate(total_reservations=Count('id'))['total_reservations'] or 0
@@ -77,7 +79,6 @@ class CommissionViewSet(viewsets.ViewSet):
                 'total_reservations': total_property_reservations
             })
 
-        # Retorno final
         data = {
             'total_commission': total_commission,
             'total_reservations': total_reservations,

@@ -16,6 +16,8 @@ class Owner(BaseModelDate):
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ('name',)
 
 class Host(BaseModelDate):
     name = models.CharField(max_length=100)
@@ -25,6 +27,8 @@ class Host(BaseModelDate):
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ('name',)
 
 class Property(BaseModelDate):
     title = models.CharField(max_length=200)
@@ -44,6 +48,9 @@ class Property(BaseModelDate):
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        ordering = ('title',)
 
 class StatusChoices(models.TextChoices):
     CONFIRMED = 'Confirmed', _('Confirmed')
@@ -71,12 +78,21 @@ class Reservation(BaseModelDate):
         self.total_price = self.property.price_per_night * nights
         super().save(*args, **kwargs)
 
+    class Meta:
+        ordering = ('id',)
+
 
 class SeazoneCommission(BaseModelDate):
     reservation = models.OneToOneField(Reservation, on_delete=models.CASCADE, related_name="seazone_commission")
     reservation_date = models.DateField()
     commission_percent = models.FloatField()
     commission_value = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f'{self.reservation.__str__()} - {self.commission_value}'
+
+    class Meta:
+        ordering = ('id',)
 
 
 class HostCommission(BaseModelDate):
@@ -86,6 +102,12 @@ class HostCommission(BaseModelDate):
     commission_value = models.DecimalField(max_digits=10, decimal_places=2)
     host = models.ForeignKey(Host, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f'{self.reservation.__str__()} - {self.host.__str__()} - {self.commission_value}'
+
+    class Meta:
+        ordering = ('id',)
+
 
 class OwnerCommission(BaseModelDate):
     reservation = models.OneToOneField(Reservation, on_delete=models.CASCADE, related_name="owner_commission")
@@ -93,6 +115,12 @@ class OwnerCommission(BaseModelDate):
     commission_percent = models.FloatField()
     commission_value = models.DecimalField(max_digits=10, decimal_places=2)
     owner = models.ForeignKey(Owner, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.reservation.__str__()} - {self.owner.__str__()} - {self.commission_value}'
+
+    class Meta:
+        ordering = ('id',)
 
 
 models.signals.post_save.connect(generate_commissions, sender=Reservation)

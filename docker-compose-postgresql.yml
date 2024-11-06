@@ -36,18 +36,18 @@ services:
     depends_on:
       - postgresql
 
-#  tests:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile-postgresql
-#    command: >
-#      sh -c "
-#        sh /scripts/run_tests.sh
-#      "
-#    user: root
-#    env_file:
-#      - .env_postgresql
-#    depends_on:
-#      - django
-#    volumes:
-#      - ./django:/property_rental
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile-postgresql
+    command: >
+      sh -c "
+        sh /scripts/run_tests.sh
+      "
+    user: root
+    env_file:
+      - .env_postgresql
+    depends_on:
+      - django
+    volumes:
+      - ./django:/property_rental

@@ -1,6 +1,3 @@
-# Django imports
-import django_filters.rest_framework
-
 # Third party imports
 from rest_framework.permissions import IsAuthenticated
 
@@ -21,6 +18,3 @@ class HostViewSet(BaseCollectionViewSet):
         'default': serializer_class,
     }
     permission_classes = [IsAuthenticated]
-    filter_backends = (
-        django_filters.rest_framework.DjangoFilterBackend,
-    )

@@ -1,5 +1,4 @@
 # Django imports
-import django_filters.rest_framework
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
@@ -29,9 +28,6 @@ class PropertyViewSet(BaseCollectionViewSet):
     }
     permission_classes = [IsAuthenticated]
     filterset_class = PropertyFilter
-    filter_backends = (
-        django_filters.rest_framework.DjangoFilterBackend,
-    )
 
     @swagger_auto_schema(
         operation_summary="Availability properties",
@@ -55,7 +51,7 @@ class PropertyViewSet(BaseCollectionViewSet):
         ]
     )
     @action(detail=False, methods=['get'])
-    def availability(self, request, *args, **kwargs):
+    def availability(self, request):
         property_id = request.GET.get('property_id')
         start_date = request.GET.get('start_date')
         end_date = request.GET.get('end_date')

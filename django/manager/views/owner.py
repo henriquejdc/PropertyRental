@@ -21,6 +21,3 @@ class OwnerViewSet(BaseCollectionViewSet):
         'default': serializer_class,
     }
     permission_classes = [IsAuthenticated]
-    filter_backends = (
-        django_filters.rest_framework.DjangoFilterBackend,
-    )
