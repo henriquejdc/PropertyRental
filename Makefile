@@ -10,7 +10,7 @@ freeze:  ## Run pip-compile to lock all base dependencies
 dependencies-compile:  ## Run pip-compile to lock all base dependencies
 	cd django/ && pip-compile requirements.in --verbose
 
-test: clean ## Run tests
+test: ## Run tests
 	cd django/ && python manage.py test --failfast manager authentication
 
 test-coverage: clean ## Run tests with coverage
@@ -50,3 +50,9 @@ fix-python-import: ## Organize python imports
 format-all: ## Format code with black and isort
 	black django/ --line-length=79
 	isort django/
+
+start-sqlite: ## Copy .env_sqlite, down and up containers
+	sudo cp ./.env_sqlite ./.env && sudo docker-compose -f docker-compose-sqlite.yml down --volumes --remove-orphans && sudo docker-compose -f docker-compose-sqlite.yml up 
+
+start-postgresql: ## Copy .env_postgresql, down and up containers
+	sudo cp ./.env_postgresql ./.env && sudo docker-compose -f docker-compose-postgresql.yml down --volumes --remove-orphans && sudo docker-compose -f docker-compose-postgresql.yml up 

@@ -99,11 +99,36 @@ http://localhost:8000/docs/
 ```
 
 
+### Makefile commands:
+```
+dependencies: ## Install development dependencies
+freeze:  ## Run pip-compile to lock all base dependencies
+dependencies-compile:  ## Run pip-compile to lock all base dependencies
+test: ## Run tests
+test-coverage: ## Clean and Run tests with coverage
+clean: ## Clean local environment files
+run: ## Run Project
+makemigrations: ## Make migrations
+migrate: ## Apply migrations
+lint: ## Run code lint
+fix-python-import: ## Organize python imports
+format-all: ## Format code with black and isort
+start-sqlite: ## Copy .env_sqlite, down and up containers
+start-postgresql: ## Copy .env_postgresql, down and up containers
+```
+
+
 ### Docker PostgreSQL:
 ```
 You need to create .env like .env_postgresql file
 
+Start:
+
+sudo cp ./.env_postgresql /.env &&
+sudo docker-compose -f docker-compose-postgresql.yml down --volumes --remove-orphans &&
 sudo docker-compose -f docker-compose-postgresql.yml up
+
+Stop:
 
 sudo docker-compose -f docker-compose-postgresql.yml down
 ```
@@ -112,7 +137,13 @@ sudo docker-compose -f docker-compose-postgresql.yml down
 ```
 You need to create .env like .env_sqlite file
 
+Start:
+
+sudo cp ./.env_sqlite /.env &&
+sudo docker-compose -f docker-compose-sqlite.yml down --volumes --remove-orphans &&
 sudo docker-compose -f docker-compose-sqlite.yml up
+
+Stop:
 
 sudo docker-compose -f docker-compose-postgresql.yml down
 ```

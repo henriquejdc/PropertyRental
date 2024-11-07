@@ -4,8 +4,7 @@ FROM python:3.13-alpine
 ENV PATH="/scripts:${PATH}"
 
 # Instalar dependências do sistema para compilar o psycopg2 e outras dependências
-RUN apk add --update --no-cache --virtual .tmp gcc libc-dev linux-headers musl-dev postgresql-dev
-RUN apk add libffi-dev
+RUN apk add --update --no-cache --virtual .tmp gcc libc-dev linux-headers musl-dev postgresql-dev libffi-dev make
 
 # Copiar e instalar requisitos
 COPY ./django/requirements.txt /requirements.txt
@@ -22,8 +21,6 @@ RUN [ ! -f /django/db.sqlite3 ] && cp /django/db.sqlite3.example /django/db.sqli
 # Copia os scripts e ajusta as permissões
 COPY ./scripts /scripts
 RUN chmod +x /scripts/*
-
-COPY ./.env_sqlite /.env
 
 # Cria diretórios para arquivos de mídia e estáticos
 RUN mkdir -p /vol/web/media /vol/web/static

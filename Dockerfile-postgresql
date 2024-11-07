@@ -5,8 +5,7 @@ ENV PATH="/scripts:${PATH}"
 
 # Instalar dependências do sistema para compilar o psycopg2, se você escolher usar psycopg2
 RUN apk add --no-cache netcat-openbsd
-RUN apk add --update --no-cache --virtual .tmp gcc libc-dev linux-headers musl-dev postgresql-dev
-RUN apk add libffi-dev
+RUN apk add --update --no-cache --virtual .tmp gcc libc-dev linux-headers musl-dev postgresql-dev libffi-dev make
 
 # Copiar e instalar requisitos
 COPY ./django/requirements.txt /requirements.txt
@@ -20,8 +19,6 @@ WORKDIR /django
 # Copia os scripts e ajusta as permissões
 COPY ./scripts /scripts
 RUN chmod +x /scripts/*
-
-COPY ./.env_postgresql /.env
 
 # Cria diretórios para arquivos de mídia e estáticos
 RUN mkdir -p /vol/web/media /vol/web/static
