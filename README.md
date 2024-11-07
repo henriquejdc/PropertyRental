@@ -101,9 +101,18 @@ http://localhost:8000/docs/
 
 ### Docker PostgreSQL:
 ```
-You need to create .env like example_env file
+You need to create .env like .env_postgresql file
 
 sudo docker-compose -f docker-compose-postgresql.yml up
+
+sudo docker-compose -f docker-compose-postgresql.yml down
+```
+
+### Docker SQLite3:
+```
+You need to create .env like .env_sqlite file
+
+sudo docker-compose -f docker-compose-sqlite.yml up
 
 sudo docker-compose -f docker-compose-postgresql.yml down
 ```

@@ -125,3 +125,8 @@ class OwnerCommission(BaseModelDate):
 
 
 models.signals.post_save.connect(generate_commissions, sender=Reservation)
+
+# @receiver(post_save, sender=Reservation, dispatch_uid="reservation_task")
+# def transaction_reservation(sender, instance, **kwargs):
+#     from .tasks import transaction_reservation
+#     transaction_account.apply_async(args=[instance.id])
