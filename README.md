@@ -222,13 +222,13 @@ Already have a super user in database: admin@admin.com / admin
 
 ### Unit Tests: 
 ```
-python manage.py test --failfast manager
+python manage.py test --failfast manager authentication
 ```
 
 
 ### Unit Tests Report HTML: 
 ```
-coverage run --source='./manager' manage.py test
+coverage run --source=authentication,manager manage.py test
 coverage report
 
 coverage html

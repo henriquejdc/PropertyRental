@@ -1,8 +1,8 @@
 import json
 
-from django.core.cache import cache
-
 from property_rental import settings
+
+from django.core.cache import cache
 
 
 def set_cache(key, value, timeout=None):
@@ -14,7 +14,7 @@ def set_cache(key, value, timeout=None):
     """
     if isinstance(value, dict):
         value = json.dumps(value)
-    cache.set(f'{settings.REDIS_CACHE_KEY_PREFIX}_{key}', value, timeout)
+    cache.set(f"{settings.REDIS_CACHE_KEY_PREFIX}_{key}", value, timeout)
 
 
 def get_cache(key):
@@ -23,7 +23,7 @@ def get_cache(key):
     :param key: The key to identify the value in the cache.
     :return: The value stored in the cache or None if the key does not exist.
     """
-    value = cache.get(f'{settings.REDIS_CACHE_KEY_PREFIX}_{key}')
+    value = cache.get(f"{settings.REDIS_CACHE_KEY_PREFIX}_{key}")
     try:
         value = json.loads(value)
     except (TypeError, json.JSONDecodeError):

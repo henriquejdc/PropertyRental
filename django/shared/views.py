@@ -1,49 +1,42 @@
-# Django imports
+from typing import Any, Dict, List, Optional, Type
+
 import django_filters.rest_framework
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import permissions, serializers, status, viewsets
+from rest_framework.exceptions import (
+    ValidationError as RestFrameworkValidationError,
+)
+from rest_framework.filters import OrderingFilter, SearchFilter
+from shared.helpers import DefaultPaginationClass
+from shared.http.responses import api_exception_response, not_found_response
+
 from django.core.exceptions import FieldDoesNotExist
 from django.db import IntegrityError
-from django.db.models import ProtectedError
+from django.db.models import ProtectedError, QuerySet
 from django.http.response import Http404
-from drf_yasg.utils import swagger_auto_schema
-
-# Third party imports
-from rest_framework import permissions, status, viewsets
-from rest_framework.exceptions import ValidationError as RestFrameworkValidationError
-from rest_framework.filters import (
-    SearchFilter,
-    OrderingFilter
-)
-
-# Project imports
-from shared.helpers import (
-    DefaultPaginationClass,
-)
-from shared.http.responses import (
-    api_exception_response,
-    not_found_response
-)
 
 
 class BaseCollectionViewSet(viewsets.ModelViewSet):
-    """ Base ModelViewSet class. """
-    model_class = None
+    """Base ModelViewSet class."""
+
+    model_class: Optional[QuerySet] = None
     protected_error_message = None
     pagination_class = DefaultPaginationClass
-    serializer_class = None
-    serializers = None
-    open_actions = []
+    serializer_class: Optional[Type[serializers.Serializer]] = None
+    serializers: Optional[Dict[str, Any]] = None
+    open_actions = List[Any]
     http_method_names = (
-        'options',
-        'get',
-        'post',
-        'put',
-        'patch',
-        'delete',
+        "options",
+        "get",
+        "post",
+        "put",
+        "patch",
+        "delete",
     )
-    ignore_paginator_actions = []
-    ignore_ordering_actions = []
-    ignore_search_filter_actions = []
-    ignore_viewset_filters_actions = []
+    ignore_paginator_actions = List[Any]
+    ignore_ordering_actions = List[Any]
+    ignore_search_filter_actions = List[Any]
+    ignore_viewset_filters_actions = List[Any]
 
     @property
     def paginator(self):
@@ -73,20 +66,19 @@ class BaseCollectionViewSet(viewsets.ModelViewSet):
         return filter_backends
 
     def get_serializer_class(self):
-        return self.serializers.get(
-            self.action,
-            self.serializers['default']
-        )
+        return self.serializers.get(self.action, self.serializers["default"])
 
     def get_permissions(self):
         if self.action in self.open_actions:
-            self.permission_classes = [permissions.AllowAny, ]
+            self.permission_classes = [
+                permissions.AllowAny,
+            ]
         return super().get_permissions()
 
     def get_queryset(self):
         queryset = super().get_queryset()
         try:
-            if getattr(self, 'swagger_fake_view', False):
+            if getattr(self, "swagger_fake_view", False):
                 return self.model_class.objects.none()  # pragma: no cover
 
         except FieldDoesNotExist:
@@ -118,7 +110,7 @@ class BaseCollectionViewSet(viewsets.ModelViewSet):
         except IntegrityError as validation_exception:
             return api_exception_response(
                 exception=validation_exception,
-                http_status=status.HTTP_400_BAD_REQUEST
+                http_status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as exception:
             return api_exception_response(exception=exception)
@@ -134,7 +126,7 @@ class BaseCollectionViewSet(viewsets.ModelViewSet):
         except IntegrityError as validation_exception:
             return api_exception_response(
                 exception=validation_exception,
-                http_status=status.HTTP_400_BAD_REQUEST
+                http_status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as exception:
             return api_exception_response(exception=exception)
@@ -158,8 +150,7 @@ class BaseCollectionViewSet(viewsets.ModelViewSet):
             return not_found_response(exception)
         except ProtectedError as exception:
             return api_exception_response(
-                exception=exception,
-                http_status=status.HTTP_400_BAD_REQUEST
+                exception=exception, http_status=status.HTTP_400_BAD_REQUEST
             )
         except Exception as exception:
             return api_exception_response(exception=exception)

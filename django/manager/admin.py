@@ -1,23 +1,22 @@
-# Django imports
-from django.contrib import admin
-
-# Project imports
 from manager.models import (
-    Owner,
     Host,
+    HostCommission,
+    Owner,
+    OwnerCommission,
     Property,
     Reservation,
     SeazoneCommission,
-    HostCommission,
-    OwnerCommission,
 )
 from property_rental.admin import property_rental_admin as admin_site
+
+from django.contrib import admin
 
 
 class BaseAdmin(admin.ModelAdmin):  # pragma: no cover
     def get_list_display(self, request):
         fields = [field.name for field in self.model._meta.fields]
         return fields
+
 
 admin_site.register(Owner, BaseAdmin)
 admin_site.register(Host, BaseAdmin)

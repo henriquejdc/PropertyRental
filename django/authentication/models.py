@@ -1,6 +1,6 @@
-from django.db import models
-from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
+from django.contrib.auth.models import AbstractUser
+from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
@@ -17,17 +17,17 @@ class CustomUserManager(BaseUserManager):
         return new_user
 
     def create_superuser(self, email, password, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-        extra_fields.setdefault('is_active', True)
-        
-        if extra_fields.get('is_staff') is not True:
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        extra_fields.setdefault("is_active", True)
+
+        if extra_fields.get("is_staff") is not True:
             raise ValueError(_("SuperUser should have is_staff as True"))
-        
-        if extra_fields.get('is_superuser') is not True:
+
+        if extra_fields.get("is_superuser") is not True:
             raise ValueError(_("SuperUser should have is_superuser as True"))
 
-        if extra_fields.get('is_active') is not True:
+        if extra_fields.get("is_active") is not True:
             raise ValueError(_("SuperUser should have is_active as True"))
 
         if not email:
@@ -44,11 +44,10 @@ class User(AbstractUser):
     username = models.CharField(max_length=25, unique=True)
     email = models.EmailField(max_length=80, unique=True)
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["username"]
 
     objects = CustomUserManager()
 
     def __str__(self):
         return f"Email: {self.email} - Username: {self.username}"
-    

@@ -1,11 +1,8 @@
-# Third party imports
 from rest_framework import serializers, status
 from rest_framework.validators import ValidationError
 
-# Django imports
 from django.utils.translation import gettext_lazy as _
 
-# Project imports
 from .models import User
 
 
@@ -20,17 +17,23 @@ class UserCreationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'password']
+        fields = ["id", "username", "email", "password"]
 
     def validate(self, attrs):
-        email = User.objects.filter(email=attrs.get('email')).exists()
-        username = User.objects.filter(username=attrs.get('username')).exists()
+        email = User.objects.filter(email=attrs.get("email")).exists()
+        username = User.objects.filter(username=attrs.get("username")).exists()
 
         if email:
-            raise ValidationError(detail=_("User with email exists"), code=status.HTTP_403_FORBIDDEN)
+            raise ValidationError(
+                detail=_("User with email exists"),
+                code=status.HTTP_403_FORBIDDEN,
+            )
 
         if username:
-            raise ValidationError(detail=_("User with username exists"), code=status.HTTP_403_FORBIDDEN)
+            raise ValidationError(
+                detail=_("User with username exists"),
+                code=status.HTTP_403_FORBIDDEN,
+            )
 
         return super().validate(attrs)
 
@@ -38,11 +41,13 @@ class UserCreationSerializer(serializers.ModelSerializer):
 
         try:
             user = User.objects.create(
-                username=validated_data['username'],
-                email=validated_data['email'],
+                username=validated_data["username"],
+                email=validated_data["email"],
             )
-            user.set_password(validated_data['password'])
+            user.set_password(validated_data["password"])
             user.save()
             return user
         except Exception as e:  # pragma: no cover
-            raise ValidationError(detail=e, code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            raise ValidationError(
+                detail=e, code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
