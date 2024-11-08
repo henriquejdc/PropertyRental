@@ -8,7 +8,7 @@ wait_for_service() {
 
   echo "Aguardando o serviço $SERVICE_NAME ($HOST:$PORT) iniciar..."
   while ! nc -z $HOST $PORT; do
-    sleep 1
+    sleep 5
   done
   echo "$SERVICE_NAME está pronto!"
 }

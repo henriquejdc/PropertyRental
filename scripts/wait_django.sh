@@ -8,8 +8,8 @@ echo "Aguardando o serviço Django iniciar em $HOST:$PORT..."
 
 # Loop até que a conexão com Django esteja disponível
 while ! nc -z $HOST $PORT; do
-  echo "Django ainda não está pronto. Tentando novamente em 80 segundos..."
-  sleep 80
+  echo "Django ainda não está pronto. Tentando novamente em 5 segundos..."
+  sleep 5
 done
 
 echo "Django está pronto! Continuando..."

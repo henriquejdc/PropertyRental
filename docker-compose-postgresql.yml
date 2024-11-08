@@ -38,7 +38,7 @@ services:
     depends_on:
       - tests
     restart: "no"
-    entrypoint: ["sh", "-c", "while [ ! -f /tmp/test_finished.lock ]; do echo 'Aguardando testes...'; sleep 50; done; echo 'Testes concluídos, iniciando PostgreSQL' && exec docker-entrypoint.sh postgres"]
+    entrypoint: ["sh", "-c", "while [ ! -f /tmp/test_finished.lock ]; do echo 'Aguardando testes...'; sleep 5; done; echo 'Testes concluídos, iniciando PostgreSQL' && exec docker-entrypoint.sh postgres"]
 
   rabbitmq:
     image: rabbitmq:management-alpine
@@ -54,7 +54,7 @@ services:
       - test-lock:/tmp
     depends_on:
       - tests
-    entrypoint: ["sh", "-c", "while [ ! -f /tmp/test_finished.lock ]; do echo 'Aguardando testes...'; sleep 50; done; echo 'Testes concluídos, iniciando Rabbitmq' && /usr/local/bin/docker-entrypoint.sh rabbitmq-server"]
+    entrypoint: ["sh", "-c", "while [ ! -f /tmp/test_finished.lock ]; do echo 'Aguardando testes...'; sleep 5; done; echo 'Testes concluídos, iniciando Rabbitmq' && /usr/local/bin/docker-entrypoint.sh rabbitmq-server"]
 
   redis:
     image: redis:alpine
@@ -68,7 +68,7 @@ services:
     depends_on:
       - tests
     restart: "no"
-    entrypoint: ["sh", "-c", "while [ ! -f /tmp/test_finished.lock ]; do echo 'Aguardando testes...'; sleep 50; done; echo 'Testes concluídos, iniciando Redis' && /usr/local/bin/docker-entrypoint.sh redis-server"]
+    entrypoint: ["sh", "-c", "while [ ! -f /tmp/test_finished.lock ]; do echo 'Aguardando testes...'; sleep 5; done; echo 'Testes concluídos, iniciando Redis' && /usr/local/bin/docker-entrypoint.sh redis-server"]
 
   django:
     build:
