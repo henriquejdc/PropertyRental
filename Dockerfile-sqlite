@@ -10,6 +10,9 @@ RUN apk add --update --no-cache --virtual .tmp gcc libc-dev linux-headers musl-d
 COPY ./django/requirements.txt /requirements.txt
 RUN pip install --no-cache-dir -r /requirements.txt
 
+# Limpar qualquer conteúdo anterior da pasta /scripts antes de copiar
+RUN rm -rf /scripts/*
+
 # Cria o diretório da aplicação Django
 RUN mkdir /django
 COPY ./django /django

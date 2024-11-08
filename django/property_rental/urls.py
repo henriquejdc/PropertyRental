@@ -20,6 +20,7 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path("admin/", property_rental_admin.urls),
+    path("", include("django_prometheus.urls")),
     path("v1/auth/", include("authentication.urls")),
     path("v1/auth/", include("djoser.urls.jwt")),
     path("v1/", include("manager.urls")),

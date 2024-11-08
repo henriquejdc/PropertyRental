@@ -18,7 +18,7 @@ services:
       - ./django:/property_rental
       - test-lock:/tmp
     restart: "no"
-
+    
   rabbitmq:
     image: rabbitmq:management-alpine
     environment:
@@ -27,11 +27,13 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    networks:
+      - observability
     volumes:
       - test-lock:/tmp
     depends_on:
       - tests
-    entrypoint: [ "sh", "-c", "while [ ! -f /tmp/test_finished.lock ]; do echo 'Aguardando testes...'; sleep 50; done; echo 'Testes concluídos, iniciando Rabbitmq' && /usr/local/bin/docker-entrypoint.sh rabbitmq-server" ]
+    entrypoint: ["sh", "-c", "while [ ! -f /tmp/test_finished.lock ]; do echo 'Aguardando testes...'; sleep 50; done; echo 'Testes concluídos, iniciando Rabbitmq' && /usr/local/bin/docker-entrypoint.sh rabbitmq-server"]
 
   redis:
     image: redis:alpine
@@ -40,10 +42,12 @@ services:
       - test-lock:/tmp
     ports:
       - "6380:6379"
+    networks:
+      - observability
     depends_on:
       - tests
     restart: "no"
-    entrypoint: [ "sh", "-c", "while [ ! -f /tmp/test_finished.lock ]; do echo 'Aguardando testes...'; sleep 50; done; echo 'Testes concluídos, iniciando Redis' && /usr/local/bin/docker-entrypoint.sh redis-server" ]
+    entrypoint: ["sh", "-c", "while [ ! -f /tmp/test_finished.lock ]; do echo 'Aguardando testes...'; sleep 50; done; echo 'Testes concluídos, iniciando Redis' && /usr/local/bin/docker-entrypoint.sh redis-server"]
 
   django:
     build:
@@ -56,6 +60,7 @@ services:
       - test-lock:/tmp
     command: >
       sh -c "
+        sh /scripts/wait_for_db.sh &&
         sh /scripts/wait_for_services.sh  &&
         sh /scripts/collect_static.sh &&
         sh /scripts/migrate.sh &&
@@ -68,6 +73,8 @@ services:
       - tests
       - rabbitmq
       - redis
+    networks:
+      - observability
     restart: "no"
 
   celery:
@@ -85,7 +92,46 @@ services:
       - rabbitmq
       - redis
     user: root
+    networks:
+      - observability
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./scripts:/scripts
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    networks:
+      - observability
+    depends_on:
+      - django
+    restart: "unless-stopped"
+    entrypoint: ["/bin/sh", "-c", "/scripts/wait_django.sh && /bin/prometheus --config.file=/etc/prometheus/prometheus.yml"]
+
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - observability
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+    restart: "unless-stopped"
+    volumes:
+      - ./scripts:/scripts
+      - grafana-storage:/var/lib/grafana
+    entrypoint: ["/bin/sh", "-c", "/scripts/wait_django.sh && /usr/share/grafana/bin/grafana-server"]
 
 volumes:
   test-lock:
   redis-data:
+  grafana-storage:
+
+networks:
+  observability:
+    driver: bridge

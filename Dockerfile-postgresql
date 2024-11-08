@@ -16,7 +16,10 @@ RUN mkdir /django
 COPY ./django /django
 WORKDIR /django
 
-# Copia os scripts e ajusta as permissões
+# Limpar qualquer conteúdo anterior da pasta /scripts antes de copiar
+RUN rm -rf /scripts/*
+
+# Copia os scripts para o diretório /scripts e ajusta as permissões
 COPY ./scripts /scripts
 RUN chmod +x /scripts/*
 

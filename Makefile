@@ -52,7 +52,14 @@ format-all: ## Format code with black and isort
 	isort django/
 
 start-sqlite: ## Copy .env_sqlite, down and up containers
-	sudo cp ./.env_sqlite ./.env && sudo docker-compose -f docker-compose-sqlite.yml down --volumes --remove-orphans && sudo docker-compose -f docker-compose-sqlite.yml up 
+	@sudo cp ./.env_sqlite ./.env && sudo docker-compose -f docker-compose-sqlite.yml down --volumes --remove-orphans && sudo docker-compose -f docker-compose-sqlite.yml up
 
 start-postgresql: ## Copy .env_postgresql, down and up containers
-	sudo cp ./.env_postgresql ./.env && sudo docker-compose -f docker-compose-postgresql.yml down --volumes --remove-orphans && sudo docker-compose -f docker-compose-postgresql.yml up 
+	@sudo cp ./.env_postgresql ./.env && sudo docker-compose -f docker-compose-postgresql.yml down --volumes --remove-orphans && sudo docker-compose -f docker-compose-postgresql.yml up
+
+stopped-sqlite: ## Copy Down containers
+	@sudo docker-compose -f docker-compose-postgresql.yml down
+
+stopped-postgresql: ## Down and up containers
+	@sudo docker-compose -f docker-compose-sqlite.yml down
+
